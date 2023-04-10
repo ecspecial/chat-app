@@ -1,7 +1,15 @@
 import React from "react";
 import { StyleSheet, View, Text } from "react-native";
+import { GiftedChat } from "react-native-gifted-chat";
 
 export default class Chat extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            messages: [],
+        }
+    }
 
     // Set the navigation header title to the name passed through navigation props
     componentDidMount() {
