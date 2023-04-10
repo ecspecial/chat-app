@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { StyleSheet, TextInput, ImageBackground, View, Text, TouchableOpacity, Keyboard  } from "react-native";
 
 // Object containing background color options
@@ -9,128 +9,88 @@ const backgroundColors = {
     green: { backgroundColor: "#94ae89" },
 };
 
-export default class Start extends React.Component {
+const Start = ({ navigation }) => {
 
     // Set initial state with empty name, no selected background color, and box height at 44%    
-    constructor(props) {
-        super(props);
-        this.state = {
-            name: "",
-            backgroundColor: "",
-            boxHeight: "44%"
-        }
-    }
+    const [name, setName] = useState("");
+    const [backgroundColor, setBackgroundColor] = useState("");
+    const [boxHeight, setBoxHeight] = useState("44%");
 
     // Add listeners for when keyboard appears and disappears
-    componentDidMount() {
-        this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
-        this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
-    }
-
-    // Remove listeners when component is unmounted
-    componentWillUnmount() {
-        this.keyboardDidShowListener.remove();
-        this.keyboardDidHideListener.remove();
-    }
-
-    // Change box height when keyboard appears
-    _keyboardDidShow = () => {
-        this.setState({ boxHeight: "60%" });
-    }
-
-    // Reset box height when keyboard disappears
-    _keyboardDidHide = () => {
-        this.setState({ boxHeight: "44%" });
-    }
-
-    // Function to update selected background color in state
-    selectColor = (color) => {
-        this.setState({backgroundColor: color});
-    }
-
-    render () {
-        // Destructure the backgroundColors object
-        const { black, purple, grey, green } = backgroundColors;
-        return (
-            <View style={styles.container}>
-                <ImageBackground 
-                    source={require("../assets/Background-Image.png")}
-                    style={[styles.container, styles.image]}
-                >
-                    <Text style={styles.title}>Chat App!</Text>
-                    <View style={[styles.box, { height: this.state.boxHeight }]}>
-                        <TextInput
-                            style={styles.inputBox}
-                            value={this.state.name}
-                            onChangeText={(name) => this.setState({ name })}
-                            placeholder="Your Name"
-                        />
-                        <View style={styles.colorBox}>
-                            <Text style={styles.colorText}>Choose background color:</Text>
-                            <View style={styles.colorView}>
-                                <View style={[
-                                    styles.colorWrapper,
-                                    this.state.backgroundColor === black.backgroundColor ? styles.colorSelected : {}
-                                ]}>
-                                    <TouchableOpacity
-                                    style={[
-                                        styles.color,
-                                        black,
-                                    ]}
-                                    onPress={() => this.selectColor(black.backgroundColor)}
-                                    />
-                                </View>
-                                
-                                <View style={[
-                                    styles.colorWrapper,
-                                    this.state.backgroundColor === purple.backgroundColor ? styles.colorSelected : {}
-                                ]}>
-                                    <TouchableOpacity
-                                    style={[
-                                        styles.color,
-                                        purple,
-                                    ]}
-                                    onPress={() => this.selectColor(purple.backgroundColor)}
-                                    />
-                                </View>
-                                <View style={[
-                                    styles.colorWrapper,
-                                    this.state.backgroundColor === grey.backgroundColor ? styles.colorSelected : {}
-                                ]}>
-                                    <TouchableOpacity
-                                    style={[
-                                        styles.color,
-                                        grey,
-                                    ]}
-                                    onPress={() => this.selectColor(grey.backgroundColor)}
-                                    />
-                                </View>
-                                <View style={[
-                                    styles.colorWrapper,
-                                    this.state.backgroundColor === green.backgroundColor ? styles.colorSelected : {}
-                                ]}>
-                                    <TouchableOpacity
-                                    style={[
-                                        styles.color,
-                                        green,
-                                    ]}
-                                    onPress={() => this.selectColor(green.backgroundColor)}
-                                    />
-                                </View>
-                            </View>
-                        </View>
-                        <TouchableOpacity
-                            style={styles.button}
-                            onPress={() => this.props.navigation.navigate('Chat', {name: this.state.name, color: this.state.backgroundColor})}
-                        >
-                            <Text style={styles.buttonText}>Start Chatting</Text>
-                        </TouchableOpacity>
-                    </View>
-                </ImageBackground>
-            </View>
+    useEffect(() => {
+        const keyboardDidShowListener = Keyboard.addListener(
+          "keyboardDidShow",
+          () => setBoxHeight("60%")
         );
-    }
-}
+        const keyboardDidHideListener = Keyboard.addListener(
+          "keyboardDidHide",
+          () => setBoxHeight("44%")
+        );
+    
+        return () => {
+          keyboardDidShowListener.remove();
+          keyboardDidHideListener.remove();
+        };
+      }, []);
+    
+    // Function to update selected background color in state
+      const selectColor = (color) => {
+        setBackgroundColor(color);
+    };
+
+    const { black, purple, grey, green } = backgroundColors;
+    return (
+        <View style={styles.container}>
+            <ImageBackground
+                source={require("../assets/Background-Image.png")}
+                style={[styles.container, styles.image]}
+            >
+                <Text style={styles.title}>Chat App!</Text>
+                <View style={[styles.box, { height: boxHeight }]}>
+                    <TextInput
+                        style={styles.inputBox}
+                        value={name}
+                        onChangeText={setName}
+                        placeholder="Your Name"
+                    />
+                    <View style={styles.colorBox}>
+                        <Text style={styles.colorText}>Choose background color:</Text>
+                        <View style={styles.colorView}>
+                            {[black, purple, grey, green].map((color) => (
+                                <View
+                                    key={color.backgroundColor}
+                                    style={[
+                                    styles.colorWrapper,
+                                    backgroundColor === color.backgroundColor
+                                    ? styles.colorSelected
+                                    : {},
+                                    ]}
+                                >
+                                <TouchableOpacity
+                                    style={[styles.color, color]}
+                                    onPress={() => selectColor(color.backgroundColor)}
+                                />
+                                </View>
+                            ))}
+                        </View>
+                    </View>
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={() =>
+                            navigation.navigate("Chat", {
+                            name,
+                            color: backgroundColor,
+                            })
+                        }
+                    >
+                        <Text style={styles.buttonText}>Start Chatting</Text>
+                    </TouchableOpacity>
+                </View>
+            </ImageBackground>
+        </View>
+    );
+};
+
 
 // Styles for the component
 const styles = StyleSheet.create({
@@ -223,3 +183,5 @@ const styles = StyleSheet.create({
         opacity: 100
     }
 })
+
+export default Start;
