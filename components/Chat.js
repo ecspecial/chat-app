@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, View, KeyboardAvoidingView, Platform } from "react-native";
+import { StyleSheet, View, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from "react-native";
 import { Bubble, GiftedChat, SystemMessage, Time, Day } from "react-native-gifted-chat";
 
 const Chat = ({ route, navigation }) => {
@@ -98,6 +98,7 @@ const Chat = ({ route, navigation }) => {
   const { name, color } = route.params;
 
   return (
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <View style={[styles.container, { backgroundColor: color }]}>
         <GiftedChat
             messages={messages}
@@ -112,6 +113,7 @@ const Chat = ({ route, navigation }) => {
         />
       { Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null }
     </View>
+    </TouchableWithoutFeedback>
   );
 };
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, TextInput, ImageBackground, View, Text, TouchableOpacity, Keyboard, KeyboardAvoidingView, Dimensions } from "react-native";
+import { StyleSheet, TextInput, ImageBackground, View, Text, TouchableOpacity, KeyboardAvoidingView, Dimensions, TouchableWithoutFeedback, Keyboard } from "react-native";
 
 // Object containing background color options
 const backgroundColors = {
@@ -35,7 +35,8 @@ const Start = ({ navigation }) => {
 
     const { navy, purple, grey, green } = backgroundColors;
     return (
-        <View style={styles.container}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <View style={styles.container}>
             <ImageBackground
                 source={require("../assets/Background-Image.png")}
                 style={[styles.container, styles.image]}
@@ -79,6 +80,7 @@ const Start = ({ navigation }) => {
             </ImageBackground>
             {Platform.OS === "ios"?<KeyboardAvoidingView behavior="padding" />: null}
         </View>
+        </TouchableWithoutFeedback>
     );
 };
 
