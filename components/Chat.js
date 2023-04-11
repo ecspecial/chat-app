@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, View, KeyboardAvoidingView, Platform } from "react-native";
-import { Bubble, GiftedChat } from "react-native-gifted-chat";
+import { Bubble, GiftedChat, SystemMessage, Time, Day } from "react-native-gifted-chat";
 
 const Chat = ({ route, navigation }) => {
   const [messages, setMessages] = useState([]);
@@ -35,33 +35,82 @@ const Chat = ({ route, navigation }) => {
   };
 
   const renderBubble = (props) => {
-    return <Bubble
+    return (
+      <Bubble
         {...props}
+        textStyle={{
+          right: {
+            color: "#FFF",
+          },
+          left: {
+            color: "#FFF",
+          },
+        }}
         wrapperStyle={{
-            right: {
-              backgroundColor: "#000"
-            },
-            left: {
-              backgroundColor: "#FFF"
-            }
-          }}
+          right: {
+            backgroundColor: "#3F6188",
+          },
+          left: {
+            backgroundColor: "#222E3A",
+          },
+        }}
+      />
+    );
+  };
+
+  const renderSystemMessage = (props) => {
+    return (
+      <SystemMessage
+        {...props}
+        textStyle={{
+          color: "#FFF",
+        }}
+      />
+    );
+  };
+  
+  const renderTime = (props) => (
+    <Time
+      {...props}
+      timeTextStyle={{
+        left: {
+          color: "#FFF",
+        },
+        right: {
+          color: "#FFF",
+        },
+      }}
     />
-  }
+  );
+
+  const renderDay = (props) => {
+    return (
+      <Day
+        {...props}
+        textStyle={{
+          color: "#FFF",
+        }}
+      />
+    );
+  };
 
   // Destructure the name and color passed through navigation props
   const { name, color } = route.params;
 
   return (
-    <View style={styles.container}>
-      <GiftedChat
-        messages={messages}
-        renderBubble={renderBubble}
-        onSend={(message) => onSend(message)}
-        user={{
-          _id: 1,
-        }}
-      />
-      { Platform.OS === 'android' ? <KeyboardAvoidingView behavior="padding" /> : null }
+    <View style={[styles.container, { backgroundColor: color }]}>
+        <GiftedChat
+            messages={messages}
+            renderBubble={renderBubble}
+            renderSystemMessage={renderSystemMessage}
+            renderTime={renderTime}
+            renderDay={renderDay}
+            onSend={(message) => onSend(message)}
+            user={{
+                _id: 1,
+            }}
+        />
+      { Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null }
     </View>
   );
 };
