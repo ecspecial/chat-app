@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, TextInput, ImageBackground, View, Text, TouchableOpacity, Keyboard  } from "react-native";
+import { StyleSheet, TextInput, ImageBackground, View, Text, TouchableOpacity, Keyboard, KeyboardAvoidingView, Dimensions } from "react-native";
 
 // Object containing background color options
 const backgroundColors = {
@@ -14,24 +14,12 @@ const Start = ({ navigation }) => {
     // Set initial state with empty name, no selected background color, and box height at 44%    
     const [name, setName] = useState("");
     const [backgroundColor, setBackgroundColor] = useState("");
-    const [boxHeight, setBoxHeight] = useState("44%");
 
-    // Add listeners for when keyboard appears and disappears
-    useEffect(() => {
-        const keyboardDidShowListener = Keyboard.addListener(
-          "keyboardDidShow",
-          () => setBoxHeight("60%")
-        );
-        const keyboardDidHideListener = Keyboard.addListener(
-          "keyboardDidHide",
-          () => setBoxHeight("44%")
-        );
-    
-        return () => {
-          keyboardDidShowListener.remove();
-          keyboardDidHideListener.remove();
-        };
-      }, []);
+     // Get height of device window
+    const windowHeight = Dimensions.get("window").height;
+    // Calculate height of colored box
+    const boxHeight = windowHeight * 0.4;
+   
     
     // Function to update selected background color in state
       const selectColor = (color) => {
@@ -87,6 +75,7 @@ const Start = ({ navigation }) => {
                     </TouchableOpacity>
                 </View>
             </ImageBackground>
+            {Platform.OS === "ios"?<KeyboardAvoidingView behavior="padding" />: null}
         </View>
     );
 };
@@ -111,6 +100,7 @@ const styles = StyleSheet.create({
 
     box: {
         paddingVertical: 15,
+        height: "44%",
         width: "88%",
         justifyContent: "space-between",
         alignItems: "center",
