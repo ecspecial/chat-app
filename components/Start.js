@@ -3,7 +3,7 @@ import { StyleSheet, TextInput, ImageBackground, View, Text, TouchableOpacity, K
 
 // Object containing background color options
 const backgroundColors = {
-    black: { backgroundColor: "#090C08" },
+    navy: { backgroundColor: "#161D27" },
     purple: { backgroundColor: "#474056" },
     grey: { backgroundColor: "#d8d1d8" },
     green: { backgroundColor: "#94ae89" },
@@ -26,7 +26,14 @@ const Start = ({ navigation }) => {
         setBackgroundColor(color);
     };
 
-    const { black, purple, grey, green } = backgroundColors;
+    const onPress = () => {
+        navigation.navigate("Chat", {
+            name,
+            color: backgroundColor,
+            })
+    }
+
+    const { navy, purple, grey, green } = backgroundColors;
     return (
         <View style={styles.container}>
             <ImageBackground
@@ -44,7 +51,7 @@ const Start = ({ navigation }) => {
                     <View style={styles.colorBox}>
                         <Text style={styles.colorText}>Choose background color:</Text>
                         <View style={styles.colorView}>
-                            {[black, purple, grey, green].map((color) => (
+                            {[navy, purple, grey, green].map((color) => (
                                 <View
                                     key={color.backgroundColor}
                                     style={[
@@ -64,12 +71,7 @@ const Start = ({ navigation }) => {
                     </View>
                     <TouchableOpacity
                         style={styles.button}
-                        onPress={() =>
-                            navigation.navigate("Chat", {
-                            name,
-                            color: backgroundColor,
-                            })
-                        }
+                        onPress={onPress}
                     >
                         <Text style={styles.buttonText}>Start Chatting</Text>
                     </TouchableOpacity>
