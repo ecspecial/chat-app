@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, TextInput, ImageBackground, View, Text, TouchableOpacity, KeyboardAvoidingView, Dimensions, TouchableWithoutFeedback, Keyboard } from "react-native";
+import { getAuth, signInAnonymously } from "firebase/auth";
 
 // Object containing background color options
 const backgroundColors = {
@@ -10,6 +11,19 @@ const backgroundColors = {
 };
 
 const Start = ({ navigation }) => {
+
+    const auth = getAuth();
+
+    const signInUser = () => {
+        signInAnonymously(auth)
+            .then(result => {
+                navigation.navigate("Chat", {
+                    userID: result.user.uid,
+                    name,
+                    color: backgroundColor
+                })
+            })
+    };
 
     // Set initial state with empty name, no selected background color, and box height at 44%    
     const [name, setName] = useState("");
@@ -25,13 +39,6 @@ const Start = ({ navigation }) => {
       const selectColor = (color) => {
         setBackgroundColor(color);
     };
-
-    const onPress = () => {
-        navigation.navigate("Chat", {
-            name,
-            color: backgroundColor,
-            })
-    }
 
     const { navy, purple, grey, green } = backgroundColors;
     return (
@@ -72,7 +79,7 @@ const Start = ({ navigation }) => {
                     </View>
                     <TouchableOpacity
                         style={styles.button}
-                        onPress={onPress}
+                        onPress={signInUser}
                     >
                         <Text style={styles.buttonText}>Start Chatting</Text>
                     </TouchableOpacity>
