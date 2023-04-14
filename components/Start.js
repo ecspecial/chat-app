@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, TextInput, ImageBackground, View, Text, TouchableOpacity, KeyboardAvoidingView, Dimensions, TouchableWithoutFeedback, Keyboard } from "react-native";
+import { StyleSheet, TextInput, ImageBackground, View, Text, TouchableOpacity, KeyboardAvoidingView, Dimensions, TouchableWithoutFeedback, Keyboard, Alert } from "react-native";
 import { getAuth, signInAnonymously } from "firebase/auth";
 
 // Object containing background color options
@@ -21,7 +21,10 @@ const Start = ({ navigation }) => {
                     userID: result.user.uid,
                     name,
                     color: backgroundColor
-                })
+                });
+            })
+            .catch((error) => {
+                Alert.alert("Unable to sign in, try later again.");
             })
     };
 
