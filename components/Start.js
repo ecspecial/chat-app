@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, TextInput, ImageBackground, View, Text, TouchableOpacity, KeyboardAvoidingView, Dimensions, TouchableWithoutFeedback, Keyboard, Alert } from "react-native";
 import { getAuth, signInAnonymously } from "firebase/auth";
+import Chat from "./Chat";
 
 // Object containing background color options
 const backgroundColors = {
