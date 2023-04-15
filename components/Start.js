@@ -1,136 +1,100 @@
-import React from "react";
-import { StyleSheet, TextInput, ImageBackground, View, Text, TouchableOpacity, Keyboard  } from "react-native";
+import React, { useState, useEffect } from "react";
+import { StyleSheet, TextInput, ImageBackground, View, Text, TouchableOpacity, KeyboardAvoidingView, Dimensions, TouchableWithoutFeedback, Keyboard, Alert } from "react-native";
+import { getAuth, signInAnonymously } from "firebase/auth";
+import Chat from "./Chat";
 
 // Object containing background color options
 const backgroundColors = {
-    black: { backgroundColor: "#090C08" },
+    navy: { backgroundColor: "#161D27" },
     purple: { backgroundColor: "#474056" },
     grey: { backgroundColor: "#d8d1d8" },
     green: { backgroundColor: "#94ae89" },
 };
 
-export default class Start extends React.Component {
+const Start = ({ navigation }) => {
+
+    const auth = getAuth();
+
+    const signInUser = () => {
+        signInAnonymously(auth)
+            .then(result => {
+                navigation.navigate("Chat", {
+                    userID: result.user.uid,
+                    name,
+                    color: backgroundColor
+                });
+            })
+            .catch((error) => {
+                Alert.alert("Unable to sign in, try later again.");
+            })
+    };
 
     // Set initial state with empty name, no selected background color, and box height at 44%    
-    constructor(props) {
-        super(props);
-        this.state = {
-            name: "",
-            backgroundColor: "",
-            boxHeight: "44%"
-        }
-    }
+    const [name, setName] = useState("");
+    const [backgroundColor, setBackgroundColor] = useState("");
 
-    // Add listeners for when keyboard appears and disappears
-    componentDidMount() {
-        this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
-        this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
-    }
-
-    // Remove listeners when component is unmounted
-    componentWillUnmount() {
-        this.keyboardDidShowListener.remove();
-        this.keyboardDidHideListener.remove();
-    }
-
-    // Change box height when keyboard appears
-    _keyboardDidShow = () => {
-        this.setState({ boxHeight: "60%" });
-    }
-
-    // Reset box height when keyboard disappears
-    _keyboardDidHide = () => {
-        this.setState({ boxHeight: "44%" });
-    }
-
+     // Get height of device window
+    const windowHeight = Dimensions.get("window").height;
+    // Calculate height of colored box
+    const boxHeight = windowHeight * 0.4;
+   
+    
     // Function to update selected background color in state
-    selectColor = (color) => {
-        this.setState({backgroundColor: color});
-    }
+      const selectColor = (color) => {
+        setBackgroundColor(color);
+    };
 
-    render () {
-        // Destructure the backgroundColors object
-        const { black, purple, grey, green } = backgroundColors;
-        return (
+    const { navy, purple, grey, green } = backgroundColors;
+    return (
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={styles.container}>
-                <ImageBackground 
-                    source={require("../assets/Background-Image.png")}
-                    style={[styles.container, styles.image]}
-                >
-                    <Text style={styles.title}>Chat App!</Text>
-                    <View style={[styles.box, { height: this.state.boxHeight }]}>
-                        <TextInput
-                            style={styles.inputBox}
-                            value={this.state.name}
-                            onChangeText={(name) => this.setState({ name })}
-                            placeholder="Your Name"
-                        />
-                        <View style={styles.colorBox}>
-                            <Text style={styles.colorText}>Choose background color:</Text>
-                            <View style={styles.colorView}>
-                                <View style={[
-                                    styles.colorWrapper,
-                                    this.state.backgroundColor === black.backgroundColor ? styles.colorSelected : {}
-                                ]}>
-                                    <TouchableOpacity
+            <ImageBackground
+                source={require("../assets/Background-Image.png")}
+                style={[styles.container, styles.image]}
+            >
+                <Text style={styles.title}>Chat App!</Text>
+                <View style={[styles.box, { height: boxHeight }]}>
+                    <TextInput
+                        style={styles.inputBox}
+                        value={name}
+                        onChangeText={setName}
+                        placeholder="Your Name"
+                    />
+                    <View style={styles.colorBox}>
+                        <Text style={styles.colorText}>Choose background color:</Text>
+                        <View style={styles.colorView}>
+                            {[navy, purple, grey, green].map((color) => (
+                                <View
+                                    key={color.backgroundColor}
                                     style={[
-                                        styles.color,
-                                        black,
-                                    ]}
-                                    onPress={() => this.selectColor(black.backgroundColor)}
-                                    />
-                                </View>
-                                
-                                <View style={[
                                     styles.colorWrapper,
-                                    this.state.backgroundColor === purple.backgroundColor ? styles.colorSelected : {}
-                                ]}>
-                                    <TouchableOpacity
-                                    style={[
-                                        styles.color,
-                                        purple,
+                                    backgroundColor === color.backgroundColor
+                                    ? styles.colorSelected
+                                    : {},
                                     ]}
-                                    onPress={() => this.selectColor(purple.backgroundColor)}
-                                    />
+                                >
+                                <TouchableOpacity
+                                    style={[styles.color, color]}
+                                    onPress={() => selectColor(color.backgroundColor)}
+                                />
                                 </View>
-                                <View style={[
-                                    styles.colorWrapper,
-                                    this.state.backgroundColor === grey.backgroundColor ? styles.colorSelected : {}
-                                ]}>
-                                    <TouchableOpacity
-                                    style={[
-                                        styles.color,
-                                        grey,
-                                    ]}
-                                    onPress={() => this.selectColor(grey.backgroundColor)}
-                                    />
-                                </View>
-                                <View style={[
-                                    styles.colorWrapper,
-                                    this.state.backgroundColor === green.backgroundColor ? styles.colorSelected : {}
-                                ]}>
-                                    <TouchableOpacity
-                                    style={[
-                                        styles.color,
-                                        green,
-                                    ]}
-                                    onPress={() => this.selectColor(green.backgroundColor)}
-                                    />
-                                </View>
-                            </View>
+                            ))}
                         </View>
-                        <TouchableOpacity
-                            style={styles.button}
-                            onPress={() => this.props.navigation.navigate('Chat', {name: this.state.name, color: this.state.backgroundColor})}
-                        >
-                            <Text style={styles.buttonText}>Start Chatting</Text>
-                        </TouchableOpacity>
                     </View>
-                </ImageBackground>
-            </View>
-        );
-    }
-}
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={signInUser}
+                    >
+                        <Text style={styles.buttonText}>Start Chatting</Text>
+                    </TouchableOpacity>
+                </View>
+            </ImageBackground>
+            {Platform.OS === "ios"?<KeyboardAvoidingView behavior="padding" />: null}
+        </View>
+        </TouchableWithoutFeedback>
+    );
+};
+
 
 // Styles for the component
 const styles = StyleSheet.create({
@@ -151,6 +115,7 @@ const styles = StyleSheet.create({
 
     box: {
         paddingVertical: 15,
+        height: "44%",
         width: "88%",
         justifyContent: "space-between",
         alignItems: "center",
@@ -223,3 +188,5 @@ const styles = StyleSheet.create({
         opacity: 100
     }
 })
+
+export default Start;
