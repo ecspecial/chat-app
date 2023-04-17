@@ -5,11 +5,16 @@ import { query, onSnapshot, collection, where, orderBy, addDoc } from "firebase/
 import { async } from "@firebase/util";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+// Define the Chat component
 const Chat = ({ route, navigation, db, isConnected }) => {
     
+    // Extract the userID from route.params
     const { userID } = route.params;
+
+    // Define state variable for messages
     const [messages, setMessages] = useState([]);
 
+    // Define a function to cache messages in AsyncStorage
     const cacheMessages = async (messagesToCache) => {
         try {
             await AsyncStorage.setItem("cached_messages", JSON.stringify(messagesToCache));
@@ -18,24 +23,30 @@ const Chat = ({ route, navigation, db, isConnected }) => {
         }
     }
 
+    // Define a function to load cached messages from AsyncStorage
     const loadCachedMessages = async () => {
         const cachedMessages = await AsyncStorage.getItem("cached_messages") || [];
         setMessages(JSON.parse(cachedMessages));
     }
 
+    // Define a variable to store the message subscription
     let unsubMessages;
 
+    // Run the effect whenever isConnected changes
     useEffect(() => {
 
         // Set the navigation header title to the name passed through navigation props
         const { name } = route.params;
         navigation.setOptions({ title: name });
 
+        // If connected to Firestore, subscribe to message collection and update state
         if (isConnected === true) {
 
+            // Unsubscribe from previous message subscription
             if (unsubMessages) unsubMessages();
             unsubMessages === null;
 
+            // Set up the query and snapshot listener
             const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
             unsubMessages = onSnapshot(q, (docs) => {
                 let newMessages = [];
@@ -49,17 +60,24 @@ const Chat = ({ route, navigation, db, isConnected }) => {
                 cacheMessages(newMessages);
                 setMessages(newMessages);
         });
-        } else loadCachedMessages();
+        } else {
+            // If not connected, load cached messages
+            loadCachedMessages();
+        }
 
+        // Clean up the effect by unsubscribing from the message subscription
         return () => {
             if (unsubMessages) {unsubMessages()};
         }
     }, [isConnected]);
 
+    // Define a function to handle sending new messages to Firestore
     const onSend = (newMessages) => {
         addDoc(collection(db, "messages"), newMessages[0]);
     };
 
+    // Define functions to customize the appearance of components in GiftedChat
+    
     const renderBubble = (props) => {
         return (
             <Bubble
@@ -79,17 +97,6 @@ const Chat = ({ route, navigation, db, isConnected }) => {
                     left: {
                         backgroundColor: "#222E3A",
                     },
-                }}
-            />
-        );
-    };
-
-    const renderSystemMessage = (props) => {
-        return (
-            <SystemMessage
-                {...props}
-                textStyle={{
-                    color: "#FFF",
                 }}
             />
         );
