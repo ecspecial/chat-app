@@ -49,7 +49,7 @@ const Start = ({ navigation }) => {
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={styles.container}>
             <ImageBackground
-                source={require("../assets/Background-Image.png")}
+                source={require("../assets/Bckg-Image.jpg")}
                 style={[styles.container, styles.image]}
             >
                 <Text style={styles.title}>Chat App!</Text>
