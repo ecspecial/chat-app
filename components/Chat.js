@@ -4,9 +4,11 @@ import { Bubble, GiftedChat, SystemMessage, Time, Day, InputToolbar } from "reac
 import { query, onSnapshot, collection, where, orderBy, addDoc } from "firebase/firestore";
 import { async } from "@firebase/util";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import CustomActions from "./CustomActions";
+import MapView from 'react-native-maps';
 
 // Define the Chat component
-const Chat = ({ route, navigation, db, isConnected }) => {
+const Chat = ({ route, navigation, db, isConnected, storage }) => {
     
     // Extract the userID from route.params
     const { userID } = route.params;
@@ -77,7 +79,7 @@ const Chat = ({ route, navigation, db, isConnected }) => {
     };
 
     // Define functions to customize the appearance of components in GiftedChat
-    
+
     const renderBubble = (props) => {
         return (
             <Bubble
@@ -132,6 +134,33 @@ const Chat = ({ route, navigation, db, isConnected }) => {
         else return null
     }
 
+    const renderCustomActions = (props) => {
+        return <CustomActions userID={userID} storage={storage} {...props}/>
+    };
+
+    const renderCustomView = (props) => {
+        const { currentMessage } = props;
+        if (currentMessage.location) {
+            return (
+                <View style={{ margin: 5, borderRadius: 13, overflow: "hidden" }}>
+                    <MapView
+                        style={{
+                            width: 150,
+                            height: 100,
+                        }}
+                        region={{
+                            latitude: currentMessage.location.latitude,
+                            longitude: currentMessage.location.longitude,
+                            latitudeDelta: 0.0922,
+                            longitudeDelta: 0.0421,
+                        }}
+                    />
+                </View>
+            );
+        }
+        return null;
+    }
+
     // Destructure the name and color passed through navigation props
     const { name, color } = route.params;
 
@@ -142,6 +171,8 @@ const Chat = ({ route, navigation, db, isConnected }) => {
                 messages={messages}
                 renderBubble={renderBubble}
                 renderInputToolbar={renderInputToolbar}
+                renderActions={renderCustomActions}
+                renderCustomView={renderCustomView}
                 renderTime={renderTime}
                 renderDay={renderDay}
                 onSend={(message) => onSend(message)}
