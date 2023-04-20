@@ -5,10 +5,10 @@ import Chat from "./Chat";
 
 // Object containing background color options
 const backgroundColors = {
-    navy: { backgroundColor: "#161D27" },
-    purple: { backgroundColor: "#474056" },
-    grey: { backgroundColor: "#d8d1d8" },
-    green: { backgroundColor: "#94ae89" },
+    navy: { backgroundColor: "#000000" },
+    purple: { backgroundColor: "#16003B" },
+    grey: { backgroundColor: "#161D27" },
+    green: { backgroundColor: "#BBBBBB" },
 };
 
 const Start = ({ navigation }) => {
@@ -58,6 +58,7 @@ const Start = ({ navigation }) => {
                         style={styles.inputBox}
                         value={name}
                         onChangeText={setName}
+                        placeholderTextColor="#FFF"
                         placeholder="Your Name"
                     />
                     <View style={styles.colorBox}>
@@ -119,17 +120,18 @@ const styles = StyleSheet.create({
         width: "88%",
         justifyContent: "space-between",
         alignItems: "center",
-        backgroundColor: "#FFFFFF",
-        borderRadius: 10,
+        backgroundColor: "#2a2e35",
+        borderRadius: 15,
     },
 
     inputBox: {
         fontSize: 16,
         fontWeight: "300",
-        color: "#757083",
+        color: "#f8f8f8",
+        borderColor: "#f8f8f8",
         opacity: 50,
         borderWidth: 1,
-        borderRadius: 5,
+        borderRadius: 10,
         width: "88%",
         paddingLeft: 10,
         height: 50
@@ -142,7 +144,7 @@ const styles = StyleSheet.create({
     colorText: {
         fontSize: 16,
         fontWeight: "300",
-        color: "#757083",
+        color: "#f8f8f8",
         opacity: 100,
     },
 
@@ -168,21 +170,21 @@ const styles = StyleSheet.create({
     colorSelected: {
         borderRadius: 25,
         borderWidth: 2,
-        borderColor: "#757083",
+        borderColor: "#f8f8f8",
     },
 
     button: {
-        backgroundColor: "#757083",
+        backgroundColor: "#f8f8f8",
         height: 50,
         justifyContent: "center",
         alignItems: "center",
         borderWidth: 1,
-        borderRadius: 2,
+        borderRadius: 10,
         width: "88%",
     },
 
     buttonText: {
-        color: "#FFFFFF",
+        color: "#2a2e35",
         fontSize: 16,
         fontWeight: "600",
         opacity: 100
