@@ -5,16 +5,20 @@ import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 import { ref, uploadBytes, getDownloadURL  } from "@firebase/storage";
 
+
+// Define the CustomActions component
 const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, storage, userID  }) => {
 
     const actionSheet = useActionSheet();
 
+    // Function to generate image referense to upload to firebase storage
     const generateReference = (uri) => {
         const timeStamp = (new Date()).getTime();
         const imageName = uri.split("/")[uri.split("/").length - 1];
         return `${userID}-${timeStamp}-${imageName}`;
     }
 
+    // Function to convert image to blob
     const uploadAndSendImage = async (imageURI) => {
         const uniqueRefString = generateReference(imageURI);
         const newUploadRef = ref(storage, uniqueRefString);
@@ -27,6 +31,7 @@ const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, storage, userID  }
 
     }
 
+    // Allow picking image from device library
     const pickImage = async () => {
         let permissions = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (permissions?.granted) {
@@ -35,7 +40,8 @@ const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, storage, userID  }
           else Alert.alert("Permissions haven't been granted.");
         }
       }
-
+      
+    // Function to allow taking photo using device camera
     const takePhoto = async () => {
         let permissions = await ImagePicker.requestCameraPermissionsAsync();
         if (permissions?.granted) {
@@ -45,6 +51,7 @@ const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, storage, userID  }
         }
     }
 
+    // Function to allow sending device location
     const getLocation = async () => {
         let permissions = await Location.requestForegroundPermissionsAsync();
         if (permissions?.granted) {
@@ -60,6 +67,7 @@ const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, storage, userID  }
         } else Alert.alert("Permissions haven't been granted.");
     }
 
+    // Define additional actions to chose from chat component
     const onActionPress = () => {
         const options = ["Choose From Library", "Take Picture", "Send Location", "Cancel"];
         const cancelButtonIndex = options.length - 1;
@@ -84,6 +92,7 @@ const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, storage, userID  }
         );
     };
 
+    // Render "+" button to expand additional chat options
     return (
         <TouchableOpacity style={styles.container} onPress={onActionPress}>
             <View style={[styles.wrapper, wrapperStyle]}>
@@ -93,6 +102,7 @@ const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, storage, userID  }
     )
 }
 
+// Add styling to "+" button
 const styles = StyleSheet.create({
     container: {
       width: 26,
@@ -116,4 +126,5 @@ const styles = StyleSheet.create({
     },
   });
 
+// Export component
 export default CustomActions;
